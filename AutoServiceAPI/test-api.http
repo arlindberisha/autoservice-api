@@ -1,0 +1,125 @@
+# Auto Service Management API Test File
+# You can use this file with REST Client extension in VS Code or similar tools
+
+### Variables
+@baseUrl = https://localhost:7063
+@contentType = application/json
+
+### 1. Register the first organization owner
+POST {{baseUrl}}/api/v1/auth/register
+Content-Type: {{contentType}}
+
+{
+  "organisationName": "Super Auto Service",
+  "email": "owner@superauto.com",
+  "password": "Password123!",
+  "ownerFirstName": "John",
+  "ownerLastName": "Doe",
+  "ownerPhone": "+15551234567"
+}
+
+### 2. Login (copy the token from the register response for authentication)
+POST {{baseUrl}}/api/v1/auth/login
+Content-Type: {{contentType}}
+
+{
+  "email": "owner@superauto.com",
+  "password": "Password123!"
+}
+
+### 3. Get organization details (requires Bearer token)
+GET {{baseUrl}}/api/v1/organisation
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### 4. Create a client
+POST {{baseUrl}}/api/v1/clients
+Content-Type: {{contentType}}
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "phoneNumber": "+15559876543"
+}
+
+### 5. Create a car (use the clientId from the previous response)
+POST {{baseUrl}}/api/v1/cars
+Content-Type: {{contentType}}
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "make": "Volkswagen",
+  "model": "Golf",
+  "year": 2021,
+  "color": "Blue",
+  "vin": "WVWZZZAUZMP123456",
+  "licensePlate": "AB 123 CD",
+  "insuranceNumber": "INS-987654",
+  "mileage": 50000,
+  "engineType": "2.0L TDI",
+  "transmission": "Automatic",
+  "numberOfDoors": 5,
+  "clientId": "CLIENT_ID_HERE"
+}
+
+### 6. Create services
+POST {{baseUrl}}/api/v1/services
+Content-Type: {{contentType}}
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "name": "Oil Change"
+}
+
+###
+POST {{baseUrl}}/api/v1/services
+Content-Type: {{contentType}}
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "name": "Tire Rotation"
+}
+
+### 7. Create a bill
+POST {{baseUrl}}/api/v1/bills
+Content-Type: {{contentType}}
+Authorization: Bearer YOUR_TOKEN_HERE
+
+{
+  "clientId": "CLIENT_ID_HERE",
+  "carId": "CAR_ID_HERE",
+  "date": "2025-07-30T17:00:00Z",
+  "servicesPerformed": [
+    {
+      "serviceId": "SERVICE_ID_1",
+      "name": "Oil Change",
+      "price": 100.00
+    },
+    {
+      "serviceId": "SERVICE_ID_2",
+      "name": "Tire Rotation",
+      "price": 50.00
+    }
+  ],
+  "discount": {
+    "type": "percentage",
+    "value": 10
+  },
+  "notes": "Customer requested synthetic oil."
+}
+
+### 8. Get all bills
+GET {{baseUrl}}/api/v1/bills
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### 9. Get income report (Organization Owner only)
+GET {{baseUrl}}/api/v1/reports/income?startDate=2025-07-01&endDate=2025-07-31
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### 10. Search cars by VIN
+GET {{baseUrl}}/api/v1/cars?vin=WVWZZZAUZMP123456
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### 11. Search clients by phone
+GET {{baseUrl}}/api/v1/clients?phoneNumber=+15559876543
+Authorization: Bearer YOUR_TOKEN_HERE
